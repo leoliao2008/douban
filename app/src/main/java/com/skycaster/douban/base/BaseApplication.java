@@ -3,6 +3,8 @@ package com.skycaster.douban.base;
 import android.app.Application;
 import android.content.Context;
 import android.os.Handler;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 
@@ -19,7 +21,16 @@ public class BaseApplication extends Application{
         Fresco.initialize(this);//初始化fresco
         context=getApplicationContext();
         handler=new Handler();
+        initWebCache();//设置webview缓存模式，因为每个app只能设置一次，所以在这里设置
+
     }
+
+    private void initWebCache() {
+        String cachePath = getFilesDir().getAbsolutePath() + "webview_cache";
+        WebSettings settings = new WebView(this).getSettings();
+        settings.setAppCachePath(cachePath);
+    }
+
     public static Context getContext(){
         return context;
     }

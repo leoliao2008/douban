@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">包罗坊</string>
+    <string name="app_name">无名APP</string>
+    <string name="loading">装载中</string>
+    <string name="please_wait">请稍候......</string>
 </resources>

@@ -11,14 +11,14 @@ import android.widget.ListView;
 
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.skycaster.douban.R;
 import com.skycaster.douban.Static;
 import com.skycaster.douban.activity.WebViewActivity;
-import com.skycaster.douban.adapter.NewsAdapter;
+import com.skycaster.douban.adapter.NewsFragmentAdapter;
 import com.skycaster.douban.base.BaseFragment;
 import com.skycaster.douban.bean.NewsBean;
 import com.skycaster.douban.bean.NewsBean.ResultBean.DataBean;
 import com.skycaster.douban.util.AsynchHttpUtils;
-import com.skycaster.douban.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ public class NewsFragment extends BaseFragment {
     private String mKeyWord;
     private View mRootView;
     private ArrayList<DataBean> mList=new ArrayList<>();
-    private NewsAdapter mAdapter;
+    private NewsFragmentAdapter mAdapter;
 
     @Override
     public void onAttach(Context context) {
@@ -56,7 +56,7 @@ public class NewsFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_news, null);
         mListView=mRootView.findViewById(R.id.list_view);
-        mAdapter = new NewsAdapter(mList,getContext(), R.layout.item_news);
+        mAdapter = new NewsFragmentAdapter(mList,getContext(), R.layout.item_news);
         mListView.setDividerHeight(0);
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -74,11 +74,19 @@ public class NewsFragment extends BaseFragment {
         AsynchHttpUtils.getNews(mKeyWord, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+//                showLog(new String(responseBody));
                 if(statusCode==200){
                     NewsBean newsBean = new Gson().fromJson(new String(responseBody), NewsBean.class);
-                    List<DataBean> list = newsBean.getResult().getData();
-                    for(DataBean data:list){
-                        mList.add(data);
+                    NewsBean.ResultBean result = newsBean.getResult();
+                    if(result!=null){
+                        List<DataBean> list = result.getData();
+                        if(list!=null){
+                            for(DataBean data:list){
+                                mList.add(data);
+                            }
+                        }
+                    }else {
+                        showToast("获取网络资源失败，原因："+newsBean.getReason());
                     }
                     mAdapter.notifyDataSetChanged();
                 }
@@ -86,7 +94,7 @@ public class NewsFragment extends BaseFragment {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+                showToast("获取网络资源失败，原因："+error.getMessage());
             }
         });
 

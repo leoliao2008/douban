@@ -3,18 +3,23 @@ package com.skycaster.douban.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.webkit.WebView;
+import android.widget.FrameLayout;
 
 import com.skycaster.douban.R;
 import com.skycaster.douban.Static;
-import com.skycaster.douban.base.BaseActivity;
+import com.skycaster.douban.base.BaseMVPActivity;
+import com.skycaster.douban.presenter.WebViewPresenter;
 
 import butterknife.BindView;
 
 
-public class WebViewActivity extends BaseActivity {
-    @BindView(R.id.web_view)
-    WebView mWebView;
+/**
+ * 一个基于webview的浏览器，可以浏览新闻
+ * https://blog.csdn.net/carson_ho/article/details/52693322
+ */
+public class WebViewActivity extends BaseMVPActivity<WebViewPresenter> {
+    @BindView(R.id.root_view)
+    FrameLayout mRootView;
     private String mUrl;
 
     public static void start(Context context, String url) {
@@ -30,10 +35,19 @@ public class WebViewActivity extends BaseActivity {
     }
 
     @Override
+    protected WebViewPresenter bindPresenter() {
+        return new WebViewPresenter(this);
+    }
+
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mUrl = getIntent().getStringExtra(Static.NEWS_WEB_SITE);
-        mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.loadUrl(mUrl);
+        getPresenter().loadUrl(mUrl);
+    }
+
+    public FrameLayout getRootView() {
+        return mRootView;
     }
 }

@@ -14,9 +14,9 @@ import java.util.ArrayList;
  * Created by 廖华凯 on 2018/4/12.
  */
 
-public class NewsAdapter extends MyBaseAdapter<DataBean,NewsAdapterVH> {
+public class NewsFragmentAdapter extends MyBaseAdapter<DataBean,NewsAdapterVH> {
 
-    public NewsAdapter(ArrayList<DataBean> list, Context context, int layoutSrc) {
+    public NewsFragmentAdapter(ArrayList<DataBean> list, Context context, int layoutSrc) {
         super(list, context, layoutSrc);
     }
 
